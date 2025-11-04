@@ -79,6 +79,46 @@ const getNewestAnimal = async () => {
   return animal;
 };
 
+//practice helper functions:
+//Helper function for /get-all-mammals
+const getAllMammals = async () => {
+  const data = await db.query("SELECT * FROM animals WHERE category= 'mammal'");
+  console.log(data.rows);
+  return data.rows;
+};
+
+//Helper function for /get-all-land-mammals
+const getAllLandMammals = async () => {
+  const data = await db.query(
+    "SELECT * FROM animals WHERE category= 'mammal' AND lives_in ='land'"
+  );
+  console.log(data.rows);
+  return data.rows;
+};
+
+//Helper function for /get-all-water-mammals
+const getAllWaterMammals = async () => {
+  const data = await db.query(
+    "SELECT * FROM animals WHERE category= 'mammal' AND lives_in ='water'"
+  );
+  console.log(data.rows);
+  return data.rows;
+};
+
+//Helper function for /get-all-birds
+const getAllBirds = async () => {
+  const data = await db.query("SELECT * FROM animals WHERE category= 'bird'");
+  console.log(data.rows);
+  return data.rows;
+};
+
+//Helper function for /get-all-insects
+const getAllInsects = async () => {
+  const data = await db.query("SELECT * FROM animals WHERE category= 'insect'");
+  console.log(data.rows);
+  return data.rows;
+};
+
 // 5. deleteOneAnimal(id)
 const deleteOneAnimal = async (id) => {
   const data = await db.query("DELETE FROM animals WHERE id = $1 RETURNING *", [
@@ -124,6 +164,38 @@ app.get("/get-newest-animal", async (req, res) => {
   const newAnimal = await getNewestAnimal();
   res.json(newAnimal);
 });
+
+//Practice =>
+//GET /get-all-mammals
+app.get("/get-all-mammals", async (req, res) => {
+  const mammals = await getAllMammals();
+  res.json(mammals);
+});
+
+//GET /get-all-land-mammals
+app.get("/get-all-land-mammals", async (req, res) => {
+  const landMammals = await getAllLandMammals();
+  res.json(landMammals);
+});
+
+//GET /get-all-water-mammals
+app.get("/get-all-water-mammals", async (req, res) => {
+  const aquaMammals = await getAllWaterMammals();
+  res.json(aquaMammals);
+});
+
+//GET /get-all-birds
+app.get("/get-all-birds", async (req, res) => {
+  const birds = await getAllBirds();
+  res.json(birds);
+});
+
+//GET /get-all-insects
+app.get("/get-all-insects", async (req, res) => {
+  const insects = await getAllInsects();
+  res.json(insects);
+});
+
 // 5. POST /delete-one-animal/:id
 app.post("/delete-one-animal/:id", async (req, res) => {
   let id = req.params.id;
