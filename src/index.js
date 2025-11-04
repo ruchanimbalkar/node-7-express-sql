@@ -50,10 +50,13 @@ const getAllAnimals = async () => {
 
 // 2. getOneAnimalByName(name)
 const getOneAnimalByName = async (name) => {
-  const data = await db.query(`SELECT * FROM animals WHERE name = '${name}'`);
+  //template literal method is not secure :
+  //const data = await db.query(`SELECT * FROM animals WHERE name = '${name}'`);
+  //placeholder method is safer method (minimizes the risk of SQL injection) :
+  const data = await db.query("SELECT * FROM animals WHERE name = $1", [name]);
   console.log(data);
   // I tried this for the basic query that gives us all columns : let animal = data.rows.find((animal) => animal.name === name);
-  let animal = data.rows;
+  let animal = data.rows[0];
   console.log(animal);
   //return animal
   return animal;
@@ -61,8 +64,9 @@ const getOneAnimalByName = async (name) => {
 
 // 3. getOneAnimalById(id)
 const getOneAnimalById = async (id) => {
-  const data = await db.query(`SELECT * FROM animals WHERE id=${id}`);
-  let animal = data.rows;
+  //placeholder method is safer method (minimizes the risk of SQL injection) :
+  const data = await db.query("SELECT * FROM animals WHERE id = $1", [id]);
+  let animal = data.rows[0];
   //return animal
   return animal;
 };
@@ -70,17 +74,17 @@ const getOneAnimalById = async (id) => {
 // 4. getNewestAnimal()
 const getNewestAnimal = async () => {
   const data = await db.query("SELECT * FROM animals ORDER BY id DESC LIMIT 1");
-  let animal = data.rows;
+  let animal = data.rows[0];
   //return animal
   return animal;
 };
 
 // 5. deleteOneAnimal(id)
 const deleteOneAnimal = async (id) => {
-  const data = await db.query(
-    `DELETE FROM animals WHERE id =${id} RETURNING *`
-  );
-  let deletedAnimal = data.rows;
+  const data = await db.query("DELETE FROM animals WHERE id = $1 RETURNING *", [
+    id,
+  ]);
+  let deletedAnimal = data.rows[0];
   //return animal
   return deletedAnimal;
 };
@@ -121,9 +125,14 @@ app.get("/get-newest-animal", async (req, res) => {
   res.json(newAnimal);
 });
 // 5. POST /delete-one-animal/:id
-
+app.post("/delete-one-animal/:id", async (req, res) => {
+  let id = req.params.id;
+  const animal = await deleteOneAnimal(id);
+  res.json(animal);
+});
 // 6. POST /add-one-animal
-
+app.post("/add-one-animal", async (req, res) => {});
 // 7. POST /update-one-animal-name
-
+app.post("/update-one-animal-name", async (req, res) => {});
 // 8. POST /update-one-animal-category
+app.post("/update-one-animal-category", async (req, res) => {});
