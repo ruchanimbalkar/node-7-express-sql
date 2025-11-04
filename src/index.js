@@ -87,6 +87,24 @@ const getAllMammals = async () => {
   return data.rows;
 };
 
+// Helper function for /get-animals-category/:category
+const getAnimalsCategory = async (category) => {
+  //placeholder method is safer method (minimizes the risk of SQL injection) :
+  const data = await db.query("SELECT * FROM animals WHERE category = $1", [
+    category,
+  ]);
+  let animals = data.rows[0];
+  //return animals
+  return animals;
+};
+
+// Helper function for /get-all-flying-animals
+const getAllFlyingAnimals = async () => {
+  const data = await db.query("SELECT * FROM animals WHERE can_fly = true");
+  console.log(data.rows);
+  return data.rows;
+};
+
 //Helper function for /get-all-land-mammals
 const getAllLandMammals = async () => {
   const data = await db.query(
@@ -166,6 +184,14 @@ app.get("/get-newest-animal", async (req, res) => {
 });
 
 //Practice =>
+
+//Get /get-animals-category/:category
+app.get("/get-animals-category/:category", async (req, res) => {
+  let category = req.params.category;
+  const animals = await getAnimalsCategory(category);
+  res.json(animals);
+});
+
 //GET /get-all-mammals
 app.get("/get-all-mammals", async (req, res) => {
   const mammals = await getAllMammals();
@@ -178,6 +204,18 @@ app.get("/get-all-land-mammals", async (req, res) => {
   res.json(landMammals);
 });
 
+//GET /get-all-flying-animals
+app.get("/get-all-flying-animals", async (req, res) => {
+  const flyingAnimals = await getAllFlyingAnimals();
+  res.json(flyingAnimals);
+});
+
+//GET /get-all-insects
+app.get("/get-all-insects", async (req, res) => {
+  const insects = await getAllInsects();
+  res.json(insects);
+});
+
 //GET /get-all-water-mammals
 app.get("/get-all-water-mammals", async (req, res) => {
   const aquaMammals = await getAllWaterMammals();
@@ -188,12 +226,6 @@ app.get("/get-all-water-mammals", async (req, res) => {
 app.get("/get-all-birds", async (req, res) => {
   const birds = await getAllBirds();
   res.json(birds);
-});
-
-//GET /get-all-insects
-app.get("/get-all-insects", async (req, res) => {
-  const insects = await getAllInsects();
-  res.json(insects);
 });
 
 // 5. POST /delete-one-animal/:id
