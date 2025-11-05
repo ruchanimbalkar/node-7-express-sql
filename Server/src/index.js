@@ -383,9 +383,16 @@ app.post("/update-one-animal-name", async (req, res) => {
       // All 4XX status codes are client-side errors, which means the client sent a bad request
       return res.status(400).send("Error : Missing required fields!");
     } else {
-      await updateOneAnimalName(id, newName);
-
-      res.send(`Status Code  : 200 | Success, animal name was updated`);
+      let updatedAnimal = await updateOneAnimalName(id, newName);
+      if (updatedAnimal) {
+        res.send(`Status Code  : 200 | Success, animal name was updated`);
+      } else {
+        res
+          .status(404)
+          .send(
+            `Status Code  : 404 |Resource Not Found: no existing animal was found with the given id`
+          );
+      }
     }
   } catch (error) {
     res.status(500).send("Internal Server Error!");
@@ -407,9 +414,16 @@ app.post("/update-one-animal-name-with-error-handling", async (req, res) => {
       // All 4XX status codes are client-side errors, which means the client sent a bad request
       return res.status(400).send("Error : Missing required fields!");
     } else {
-      await updateOneAnimalName(id, newName);
-
-      res.send(`Status Code  : 200 | Success, animal name was updated`);
+      let updatedAnimal = await updateOneAnimalName(id, newName);
+      if (updatedAnimal) {
+        res.send(`Status Code  : 200 | Success, animal name was updated`);
+      } else {
+        res
+          .status(404)
+          .send(
+            `Status Code  : 404 |Resource Not Found: no existing animal was found with the given id`
+          );
+      }
     }
   } catch (error) {
     res.status(500).send("Internal Server Error!");
@@ -427,9 +441,16 @@ app.post("/update-one-animal-category", async (req, res) => {
       // All 4XX status codes are client-side errors, which means the client sent a bad request
       return res.status(400).send("Error : Missing required fields!");
     } else {
-      await updateOneAnimalCategory(id, newCategory);
-
-      res.send(`Status Code  : 200 |Success, animal category was updated`);
+      let updatedAnimal = await updateOneAnimalCategory(id, newCategory);
+      if (updatedAnimal) {
+        res.send(`Status Code  : 200 |Success, animal category was updated`);
+      } else {
+        res
+          .status(404)
+          .send(
+            `Status Code  : 404 |Resource Not Found: no existing animal was found with the given id`
+          );
+      }
     }
   } catch (error) {
     res.status(500).send("Internal Server Error!");
