@@ -157,11 +157,12 @@ const getAllInsects = async () => {
   return data.rows;
 };
 
-// 5. deleteOneAnimal(id)
-const deleteOneAnimal = async (id) => {
-  const data = await db.query("DELETE FROM animals WHERE id = $1 RETURNING *", [
-    id,
-  ]);
+// 5. deleteOneAnimal(name)
+const deleteOneAnimal = async (name) => {
+  const data = await db.query(
+    "DELETE FROM animals WHERE name = $1 RETURNING *",
+    [name]
+  );
   let deletedAnimal = data.rows[0];
   //return animal
   return deletedAnimal;
@@ -169,9 +170,59 @@ const deleteOneAnimal = async (id) => {
 
 // 6. addOneAnimal(name, category, can_fly, lives_in)
 
+//-----------------------------------------------------------------------------------------------
+//Method 1:
+// const addOneAnimal = async (animal) => {
+//   const data = await db.query(
+// "INSERT INTO animals(name, category, can_fly, lives_in) VALUES ($1,$2,$3,$4) RETURNING *;",
+//   [animal.name, animal.category, animal.can_fly, animal.lives_in];
+//   );
+//   let addedAnimal = data.rows[0];
+//   //return animal
+//   return addedAnimal;
+// };
+//-----------------------------------------------------------------------------------------------
+
+//Method 2:
+const addOneAnimal = async (name, category, can_fly, lives_in) => {
+  //we declared db in our boiler plate code which connects us to SQL database
+  //db.query() method lets us write SWL code to query the databse. Takes in 2 parameters :
+  // 1. The SQL command
+  //2. Array that contains dynamic values that we inject into the SQL command
+  const data = await db.query(
+    //SQL Query should be written all in one line, using $1-$4 as placeholders for dynamic values
+    "INSERT INTO animals(name, category, can_fly, lives_in) VALUES ($1,$2,$3,$4) RETURNING *;",
+    [name, category, can_fly, lives_in] // order matters here
+  );
+  let addedAnimal = data.rows[0];
+  console.log("addedAnimal", addedAnimal);
+};
+
 // 7. updateOneAnimalName(id, newName)
+const updateOneAnimalName = async (id, newName) => {
+  const data = await db.query(
+    //SQL Query should be written all in one line, using $1-$4 as placeholders for dynamic values
+    "UPDATE animals SET name = $1 WHERE id = $2 RETURNING *",
+    [newName, id] // order matters here
+  );
+  let updatedAnimal = data.rows[0];
+  console.table(updatedAnimal);
+  //return animal
+  return updatedAnimal;
+};
 
 // 8. updateOneAnimalCategory(id, newCategory)
+const updateOneAnimalCategory = async (id, newCategory) => {
+  const data = await db.query(
+    //SQL Query should be written all in one line, using $1-$4 as placeholders for dynamic values
+    "UPDATE animals SET category = $1 WHERE id = $2 RETURNING *",
+    [newCategory, id] // order matters here
+  );
+  let updatedAnimal = data.rows[0];
+  console.table(updatedAnimal);
+  //return animal
+  return updatedAnimal;
+};
 
 // ---------------------------------
 // API Endpoints
@@ -261,15 +312,126 @@ app.get("/get-all-birds", async (req, res) => {
   res.json(birds);
 });
 
-// 5. POST /delete-one-animal/:id
-app.post("/delete-one-animal/:id", async (req, res) => {
-  let id = req.params.id;
-  const animal = await deleteOneAnimal(id);
+// 5. POST /delete-one-animal/:name
+app.post("/delete-one-animal/:name", async (req, res) => {
+  let name = req.params.name;
+  const animal = await deleteOneAnimal(name);
   res.json(animal);
 });
 // 6. POST /add-one-animal
-app.post("/add-one-animal", async (req, res) => {});
+//app.post() takes in two parameters
+// 1. The URL path for the endpoint
+// 2. The callback function that gets triggered when we send a request to the endpoint URL
+app.post("/add-one-animal", async (req, res) => {
+  //We access whatever was sent in the request body and save it in this variable
+  //Method 1: const animal = req.body;
+  // object de-structuring
+  // const { name, category, can_fly, lives_in } = req.body;
+  // //console.log("animal :", animal);
+
+  // //call the helper function
+  // //we are not declaring a variable because our helper function does not need to return anything
+  // //Method 1:await addOneAnimal(animal) => this way we get values in the helper function using dot operator
+  // //Method 2 :
+  // let result = await addOneAnimal(name, category, can_fly, lives_in);
+
+  // //Sending response as text, so we use res.send() which sends text
+  // //If we wanted to send a response as JSON data (which would need to be an obejct or array to be valid JSON),
+  // // we would use res.json()
+  // if (typeof result === object) {
+  //   res.send(`Success, animal was added`);
+  // } else {
+  //   res.send(result);
+  // }
+
+  //Method 3 : error handling
+  try {
+    const { name, category, can_fly, lives_in } = req.body;
+    //check for missing required field in the request body : id and newName
+    if (!name || !category || can_fly === null || !lives_in) {
+      //return error message with 400 Bad request status code, because the request was badly formed with wrong syntax.
+      // All 4XX status codes are client-side errors, which means the client sent a bad request
+      return res.status(400).send("Error : Missing required fields!");
+    } else {
+      let result = await addOneAnimal(name, category, can_fly, lives_in);
+      console.log(result);
+      res.send(`Status Code  : 200 | Success, animal name was updated`);
+    }
+  } catch (error) {
+    res.status(500).send("Internal Server Error!");
+  }
+});
+
 // 7. POST /update-one-animal-name
-app.post("/update-one-animal-name", async (req, res) => {});
+app.post("/update-one-animal-name", async (req, res) => {
+  //We access whatever was sent in the request body and save it in this variable
+  // const { id, newName } = req.body;
+  // await updateOneAnimalName(id, newName);
+  // res.send(`Success, animal name was updated`);
+  // **** with error handling:
+  try {
+    // Possible errors:
+    // DONE: 400 Bad Request: what should we do when there's no body?
+    // 500 Internal Server Error: when a unique constraint is violated
+    // 404 Resource Not Found: using camelCase for the api endpoint
+    // 404 Resource Not Found: no existing animal was found with the given id
+    //
+    const { id, newName } = req.body;
+    //check for missing required field in the request body : id and newName
+    if (!newName || !id) {
+      //return error message with 400 Bad request status code, because the request was badly formed with wrong syntax.
+      // All 4XX status codes are client-side errors, which means the client sent a bad request
+      return res.status(400).send("Error : Missing required fields!");
+    } else {
+      await updateOneAnimalName(id, newName);
+
+      res.send(`Status Code  : 200 | Success, animal name was updated`);
+    }
+  } catch (error) {
+    res.status(500).send("Internal Server Error!");
+  }
+});
+
+app.post("/update-one-animal-name-with-error-handling", async (req, res) => {
+  try {
+    // Possible errors:
+    // DONE: 400 Bad Request: what should we do when there's no body?
+    // 500 Internal Server Error: when a unique constraint is violated
+    // 404 Resource Not Found: using camelCase for the api endpoint
+    // 404 Resource Not Found: no existing animal was found with the given id
+    //
+    const { id, newName } = req.body;
+    //check for missing required field in the request body : id and newName
+    if (!newName || !id) {
+      //return error message with 400 Bad request status code, because the request was badly formed with wrong syntax.
+      // All 4XX status codes are client-side errors, which means the client sent a bad request
+      return res.status(400).send("Error : Missing required fields!");
+    } else {
+      await updateOneAnimalName(id, newName);
+
+      res.send(`Status Code  : 200 | Success, animal name was updated`);
+    }
+  } catch (error) {
+    res.status(500).send("Internal Server Error!");
+  }
+});
+
 // 8. POST /update-one-animal-category
-app.post("/update-one-animal-category", async (req, res) => {});
+app.post("/update-one-animal-category", async (req, res) => {
+  try {
+    const { id, newCategory } = req.body;
+
+    //check for missing required field in the request body : id and newName
+    if (!newCategory || !id) {
+      //return error message with 400 Bad request status code, because the request was badly formed with wrong syntax.
+      // All 4XX status codes are client-side errors, which means the client sent a bad request
+      return res.status(400).send("Error : Missing required fields!");
+    } else {
+      await updateOneAnimalCategory(id, newCategory);
+
+      res.send(`Status Code  : 200 |Success, animal category was updated`);
+    }
+  } catch (error) {
+    res.status(500).send("Internal Server Error!");
+  }
+});

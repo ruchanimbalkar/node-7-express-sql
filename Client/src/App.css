@@ -1,0 +1,35 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr; /* Mobile viewport*/
+  gap: 1rem;
+}
+
+@media (min-width: 699px) /*from 699px to next breakpoint*/ {
+  .card {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 800px) {
+  .card {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+nav ul li {
+  list-style-type: none;
+}
+
+nav ul {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  justify-content: flex-end;
+}

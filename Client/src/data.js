@@ -1,0 +1,27 @@
+const animalEmojis = {
+  Butterfly: "🦋",
+  Crocodile: "🐊",
+  Dolphin: "🐬",
+  Eagle: "🦅",
+  Dragon: "🐲",
+  Elephant: "🐘",
+  Bee: "🐝",
+  Penguin: "🐧",
+  Shark: "🦈",
+  Bat: "🦇",
+  Hedgehog: "🦔",
+  Kangaroo: "🦘",
+  Lion: "🦁",
+  Peacock: "🦚",
+  Parrot: "🦜",
+  Spider: "🕷",
+  Swan: "🦢",
+  Tiger: "🐯",
+  Turkey: "🦃",
+  Owl: "🦉",
+  Duck: "🦆",
+  Flamingo: "🦩",
+  Squid: "🦑",
+};
+
+export default animalEmojis;

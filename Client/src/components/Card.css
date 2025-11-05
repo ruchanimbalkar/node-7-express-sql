@@ -1,0 +1,10 @@
+.animal-card {
+  border: 0.1rem solid gray;
+  background-color: teal;
+  margin: 1rem;
+  padding: 1rem;
+}
+
+.animal-card h5 {
+  font-style: italic;
+}
