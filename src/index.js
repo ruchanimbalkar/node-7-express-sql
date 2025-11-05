@@ -98,6 +98,26 @@ const getAnimalsCategory = async (category) => {
   return animals;
 };
 
+// Helper function for /get-animals-by-habitat/:habitat
+const getAnimalsByHabitat = async (habitat) => {
+  const data = await db.query("SELECT * FROM animals WHERE lives_in = $1", [
+    habitat,
+  ]);
+  let animals = data.rows;
+  //return animals
+  return animals;
+};
+
+// Helper function for /get-all-animals-sorted
+const getAllAnimalsSorted = async () => {
+  //Read all animals data from NEON database
+  //db.query() lets us query the SQL database
+  //It takes in one parameter :  a SQL query!
+  const data = await db.query("SELECT * FROM animals ORDER BY name");
+  console.log(data.rows);
+  return data.rows;
+};
+
 // Helper function for /get-all-flying-animals
 const getAllFlyingAnimals = async () => {
   const data = await db.query("SELECT * FROM animals WHERE can_fly = true");
@@ -196,6 +216,19 @@ app.get("/get-animals-category/:category", async (req, res) => {
 app.get("/get-all-mammals", async (req, res) => {
   const mammals = await getAllMammals();
   res.json(mammals);
+});
+
+//GET /get-animals-by-habitat/:habitat
+app.get("/get-animals-by-habitat/:habitat", async (req, res) => {
+  let habitat = req.params.habitat;
+  const animals = await getAnimalsByHabitat(habitat);
+  res.json(animals);
+});
+
+//GET /get-all-animals-sorted
+app.get("/get-all-animals-sorted", async (req, res) => {
+  const animals = await getAllAnimalsSorted();
+  res.json(animals);
 });
 
 //GET /get-all-land-mammals
