@@ -22,6 +22,14 @@ const animalEmojis = {
   Duck: "🦆",
   Flamingo: "🦩",
   Squid: "🦑",
+  Monkey: "🐒",
+  Pig: "🐖",
+  Dog: "🐕",
+  Fish: "🐟",
+  Turtle: "🐢",
+  Chipmunk: "🐿",
+  Snake: "🐍",
+  Frog: "🐸",
 };
 
 export default animalEmojis;

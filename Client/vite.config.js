@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000/",
+        target: "http://localhost:3000",
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
@@ -16,4 +16,5 @@ export default defineConfig({
   },
   plugins: [react()],
 });
+//String "/api" is proxy for base url
 //This file is saying, we are creating a proxy (alias for our base url)

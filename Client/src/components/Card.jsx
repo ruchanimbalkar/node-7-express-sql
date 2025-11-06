@@ -2,8 +2,8 @@
 import "./Card.css";
 //import
 import animalEmojis from "../data";
-
-export default function Card({ animal }) {
+import { MdDelete } from "react-icons/md";
+export default function Card({ animal, handleClick }) {
   let fly = animal.can_fly ? "Can Fly!" : "";
   let emoji = animalEmojis[animal.name];
   let showEmoji = animalEmojis[animal.name] ? emoji : "";
@@ -17,6 +17,10 @@ export default function Card({ animal }) {
         <h3> Species : {animal.category} </h3>
         <h4> Habitat : {animal.lives_in} </h4>
         <h5> {fly} </h5>
+        <button onClick={handleClick}>
+          {" "}
+          <MdDelete /> Delete Animal
+        </button>
       </div>
     </>
   );

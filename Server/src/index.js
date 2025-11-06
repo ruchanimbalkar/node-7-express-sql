@@ -5,7 +5,7 @@
 //Importing all of our node modules
 import express from "express"; // the framework that lets us build webservers
 import pg from "pg"; //pg stands for postgreSQL, for connecting to the database
-import config from "./config.js"; //importing the connection string to our database hoste don NEON
+import config from "./config.js"; //importing the connection string to our database hosted on NEON
 
 //connecting to our PostgreSQL database , or db for short
 const db = new pg.Pool({
@@ -157,12 +157,11 @@ const getAllInsects = async () => {
   return data.rows;
 };
 
-// 5. deleteOneAnimal(name)
-const deleteOneAnimal = async (name) => {
-  const data = await db.query(
-    "DELETE FROM animals WHERE name = $1 RETURNING *",
-    [name]
-  );
+// 5. deleteOneAnimal(id)
+const deleteOneAnimal = async (id) => {
+  const data = await db.query("DELETE FROM animals WHERE id = $1 RETURNING *", [
+    id,
+  ]);
   let deletedAnimal = data.rows[0];
   //return animal
   return deletedAnimal;
@@ -312,10 +311,10 @@ app.get("/get-all-birds", async (req, res) => {
   res.json(birds);
 });
 
-// 5. POST /delete-one-animal/:name
-app.post("/delete-one-animal/:name", async (req, res) => {
-  let name = req.params.name;
-  const animal = await deleteOneAnimal(name);
+// 5. POST /delete-one-animal/:id
+app.post("/delete-one-animal/:id", async (req, res) => {
+  let id = req.params.id;
+  const animal = await deleteOneAnimal(id);
   res.json(animal);
 });
 // 6. POST /add-one-animal
