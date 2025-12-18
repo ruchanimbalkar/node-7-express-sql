@@ -30,6 +30,7 @@ function App() {
 
   // write your useEffect here
   useEffect(() => {
+    console.log("useEffect");
     getAnimalsData();
   }, []);
 
